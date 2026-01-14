@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Anger Release!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .character {
+            position: relative;
+            width: 250px;
+            height: 350px;
+        }
+
+        .body {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .body img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .face-container {
+            position: absolute;
+            top: -85px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 150px;
+            overflow: visible;
+            z-index: 10;
+        }
+
+        .face-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center center;
+            transition: object-position 0.15s ease;
+        }
+
+        /* Effects */
+        .effect {
+            position: absolute;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .tomato {
+            font-size: 80px;
+            animation: throwTomato 0.5s ease-out forwards;
+        }
+
+        @keyframes throwTomato {
+            0% {
+                transform: translateY(300px) scale(0.5);
+                opacity: 1;
+            }
+            70% {
+                transform: translateY(0) scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(0) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .splat {
+            font-size: 100px;
+            animation: splat 0.6s ease-out forwards;
+        }
+
+        @keyframes splat {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        .punch-effect {
+            font-size: 100px;
+            animation: punchAnim 0.4s ease-out forwards;
+        }
+
+        @keyframes punchAnim {
+            0% {
+                transform: scale(0) rotate(-30deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5) rotate(10deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.5) rotate(0deg);
+                opacity: 0;
+            }
+        }
+
+        .slap-effect {
+            font-size: 80px;
+            animation: slapAnim 0.5s ease-out forwards;
+        }
+
+        @keyframes slapAnim {
+            0% {
+                transform: translateX(-100px) rotate(-45deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translateX(50px) rotate(20deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(100px) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .flower-effect {
+            font-size: 80px;
+            animation: flowerAnim 1s ease-out forwards;
+        }
+
+        @keyframes flowerAnim {
+            0% {
+                transform: translateY(100px) scale(0.5);
+                opacity: 0;
+            }
+            30% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50px) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        .hearts {
+            font-size: 40px;
+            animation: heartsAnim 1.5s ease-out forwards;
+        }
+
+        @keyframes heartsAnim {
+            0% {
+                transform: translateY(0) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-150px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(-50%) rotate(0); }
+            20% { transform: translateX(-50%) rotate(-10deg) translateX(-10px); }
+            40% { transform: translateX(-50%) rotate(10deg) translateX(10px); }
+            60% { transform: translateX(-50%) rotate(-10deg) translateX(-10px); }
+            80% { transform: translateX(-50%) rotate(10deg) translateX(10px); }
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 350px;
+        }
+
+        .action-btn {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            border: 4px solid #333;
+            font-size: 35px;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 0 #333;
+        }
+
+        .action-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #333;
+        }
+
+        .btn-tomato {
+            background: #ff6b6b;
+        }
+
+        .btn-punch {
+            background: #feca57;
+        }
+
+        .btn-slap {
+            background: #ff9ff3;
+        }
+
+        .btn-flower {
+            background: #48dbfb;
+        }
+
+        .score {
+            color: white;
+            font-size: 24px;
+            text-shadow: 2px 2px 0 #333;
+            text-align: center;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        .message {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translate(-50%, -100%);
+            font-size: 16px;
+            color: #333;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 3px solid #333;
+            padding: 6px 10px;
+            max-width: 200px;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 200;
+            box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .message::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 10px 10px 0 10px;
+            border-style: solid;
+            border-color: #ffffff transparent transparent transparent;
+        }
+
+        .message.show {
+            animation: messageShow 1.4s ease-out forwards;
+        }
+
+        @keyframes messageShow {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            20% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .red-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.3);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 50;
+        }
+
+        .red-overlay.flash {
+            animation: flashRed 0.3s ease-out;
+        }
+
+        @keyframes flashRed {
+            0% { opacity: 0.5; }
+            100% { opacity: 0; }
+        }
+
+        .pink-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 192, 203, 0.4);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 50;
+        }
+
+        .pink-overlay.flash {
+            animation: flashPink 0.5s ease-out;
+        }
+
+        @keyframes flashPink {
+            0% { opacity: 0.6; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="score">Hits: <span id="hitCount">0</span> | Love: <span id="loveCount">0</span></div>
+        
+        <div class="character" id="character">
+            <div class="face-container" id="faceContainer">
+                <img id="faceImg" src="Faces/Default.png" alt="Face">
+            </div>
+            <div class="body"><img src="Faces/Body.png" alt="Body"></div>
+            <div class="message" id="message"></div>
+        </div>
+
+        <div class="buttons">
+            <button class="action-btn btn-tomato" onclick="throwTomato()">🍅</button>
+            <button class="action-btn btn-punch" onclick="punch()">👊</button>
+            <button class="action-btn btn-slap" onclick="slap()">✋</button>
+            <button class="action-btn btn-flower" onclick="giveFlower()">🌸</button>
+        </div>
+    </div>
+    <div class="red-overlay" id="redOverlay"></div>
+    <div class="pink-overlay" id="pinkOverlay"></div>
+
+    <script>
+        let hitCount = 0;
+        let loveCount = 0;
+        let painCount = 0; // slaps + punches
+        let isDead = false;
+
+        const faces = {
+            default: 'Faces/Default.png',
+            irritated: 'Faces/Iritated.png',
+            hurt: 'Faces/Hurt.png',
+            dead: 'Faces/Dead.png'
+        };
+
+        // Her fotoğraf için yüzün fotoğraftaki konumuna göre ayar
+        // object-position: yüzde değeri ne kadar düşükse o kadar yukarıdan gösterir
+        const faceStyles = {
+            default:   'center 25%',  // normal selfie, yüz üst kısımda
+            irritated: 'center 20%',  // biraz daha yukarıda
+            dead:      'center 30%',  // gözler kapalı, biraz aşağıda
+            hurt:      'center 25%'   // diğerleriyle aynı
+        };
+
+        function setFace(type) {
+            const img = document.getElementById('faceImg');
+            img.src = faces[type];
+            img.style.objectPosition = faceStyles[type] || faceStyles.default;
+        }
+
+        const messages = {
+            tomato: [
+                'LAĞNN doamtes atmak nedir be insanfsız',
+                'Gözüme geldiiii !!!',
+                'Aşkım bu atma şunu da konuşalım.',
+                'Tam suratıma geldi!',
+                'Hak ettim galiba, domates bile yetmedi.'
+            ],
+            punch: [
+                'Elin de iyi ağır ha senin',
+                'Çenem yerinden oynadı...',
+                'Bir tane daha vurursan bayılacağım.',
+                'Selem noğğlur dövme yeterrr.'
+            ],
+            slap: [
+                'Hani kıyamıyordun bana eşşek seni.',
+                'Tokat sesinden mahalle uyandı.',
+                'Osmanlı kanın olduğu ne akdar belli',
+                'YAVAŞ YAVAŞ DÜŞMANA MI VURUYON',
+                'Aşkım valla bi dur bişi dicem bak'
+            ],
+            flower: [
+                'Kalbim eridi, çiçeği ver bakayım.',
+                'Bana çiçek mi verdin yoksa öpücük m üattın ıpss ;).',
+                'Sen böyle tatlı olunca hiçbir şeye kızamıyorum.',
+                'Kurban olduğum çok seviyon de mi bana..'
+            ]
+        };
+
+        // Daha tok ve gerçekçi hissedilen basit efektler
+        let audioCtx = null;
+
+        function getAudioCtx() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            const ctx = getAudioCtx();
+
+            if (type === 'punch' || type === 'slap' || type === 'tomato') {
+                const time = ctx.currentTime;
+
+                // Düşük frekanslı vuruş sesi
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(type === 'slap' ? 260 : 140, time);
+                osc.frequency.exponentialRampToValueAtTime(70, time + 0.12);
+                gain.gain.setValueAtTime(0.7, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.12);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(time);
+                osc.stop(time + 0.16);
+
+                // Kısa gürültü patlaması (şaplak / domates için)
+                const bufferSize = ctx.sampleRate * 0.10;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+                }
+                const noise = ctx.createBufferSource();
+                noise.buffer = buffer;
+                const noiseFilter = ctx.createBiquadFilter();
+                noiseFilter.type = 'highpass';
+                noiseFilter.frequency.value = type === 'tomato' ? 700 : 1500;
+                const noiseGain = ctx.createGain();
+                noiseGain.gain.setValueAtTime(0.45, time);
+                noiseGain.gain.exponentialRampToValueAtTime(0.01, time + 0.10);
+                noise.connect(noiseFilter);
+                noiseFilter.connect(noiseGain);
+                noiseGain.connect(ctx.destination);
+                noise.start(time);
+                noise.stop(time + 0.12);
+            } else if (type === 'flower') {
+                // Küçük sevimli zil sesi
+                const time = ctx.currentTime;
+                const notes = [650, 900];
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, time + i * 0.06);
+                    gain.gain.setValueAtTime(0.25, time + i * 0.06);
+                    gain.gain.exponentialRampToValueAtTime(0.01, time + 0.45 + i * 0.06);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(time + i * 0.06);
+                    osc.stop(time + 0.55 + i * 0.06);
+                });
+            }
+        }
+
+        function showMessage(type) {
+            // Don't show speech balloon when dead
+            if (isDead) {
+                return;
+            }
+            const messageEl = document.getElementById('message');
+            const msgs = messages[type];
+            messageEl.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+            messageEl.classList.remove('show');
+            void messageEl.offsetWidth;
+            messageEl.classList.add('show');
+        }
+
+        function createEffect(emoji, className, x, y) {
+            const effect = document.createElement('div');
+            effect.className = 'effect ' + className;
+            effect.textContent = emoji;
+            effect.style.left = x + 'px';
+            effect.style.top = y + 'px';
+            document.body.appendChild(effect);
+            setTimeout(() => effect.remove(), 1500);
+        }
+
+        function shakeCharacter() {
+            const face = document.getElementById('faceContainer');
+            face.classList.remove('shake');
+            void face.offsetWidth;
+            face.classList.add('shake');
+        }
+
+        function flashRed() {
+            const overlay = document.getElementById('redOverlay');
+            overlay.classList.remove('flash');
+            void overlay.offsetWidth;
+            overlay.classList.add('flash');
+        }
+
+        function flashPink() {
+            const overlay = document.getElementById('pinkOverlay');
+            overlay.classList.remove('flash');
+            void overlay.offsetWidth;
+            overlay.classList.add('flash');
+        }
+
+        function updateScore() {
+            document.getElementById('hitCount').textContent = hitCount;
+            document.getElementById('loveCount').textContent = loveCount;
+        }
+
+        function throwTomato() {
+            const character = document.getElementById('character');
+            const rect = character.getBoundingClientRect();
+            const x = rect.left + rect.width / 2 - 40;
+            const y = rect.top + 50;
+            
+            createEffect('🍅', 'tomato', x, y);
+            setTimeout(() => {
+                createEffect('💥', 'splat', x, y);
+                shakeCharacter();
+                flashRed();
+                playSound('tomato');
+                // Only change face if not dead
+                if (!isDead) {
+                    setFace('irritated');
+                }
+            }, 400);
+            
+            hitCount++;
+            updateScore();
+            showMessage('tomato');
+        }
+
+        function punch() {
+            const character = document.getElementById('character');
+            const rect = character.getBoundingClientRect();
+            const x = rect.left + rect.width / 2 - 50;
+            const y = rect.top + 30;
+            
+            createEffect('👊', 'punch-effect', x, y);
+            setTimeout(() => {
+                createEffect('💫', 'splat', x + 30, y - 20);
+                shakeCharacter();
+                flashRed();
+                playSound('punch');
+                
+                painCount++;
+                if (painCount >= 20) {
+                    isDead = true;
+                    setFace('dead');
+                } else {
+                    setFace('hurt');
+                }
+            }, 200);
+            
+            hitCount++;
+            updateScore();
+            showMessage('punch');
+        }
+
+        function slap() {
+            const character = document.getElementById('character');
+            const rect = character.getBoundingClientRect();
+            const x = rect.left + rect.width / 2 - 40;
+            const y = rect.top + 50;
+            
+            createEffect('🖐️', 'slap-effect', x, y);
+            setTimeout(() => {
+                shakeCharacter();
+                flashRed();
+                playSound('slap');
+                
+                painCount++;
+                if (painCount >= 20) {
+                    isDead = true;
+                    setFace('dead');
+                } else {
+                    setFace('hurt');
+                }
+            }, 250);
+            
+            hitCount++;
+            updateScore();
+            showMessage('slap');
+        }
+
+        function giveFlower() {
+            const character = document.getElementById('character');
+            const rect = character.getBoundingClientRect();
+            const x = rect.left + rect.width / 2 - 40;
+            const y = rect.top + 80;
+            
+            createEffect('🌸', 'flower-effect', x, y);
+            createEffect('💕', 'hearts', x - 30, y - 30);
+            createEffect('💕', 'hearts', x + 30, y - 20);
+            createEffect('💕', 'hearts', x, y - 50);
+            
+            flashPink();
+            playSound('flower');
+            
+            // Flower heals everything!
+            isDead = false;
+            painCount = 0;
+            setFace('default');
+            
+            loveCount++;
+            updateScore();
+            showMessage('flower');
+        }
+
+        // Prevent zoom on double tap
+        document.addEventListener('touchend', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+    </script>
+</body>
+</html>
